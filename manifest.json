@@ -1,36 +1,36 @@
 {
-  "manifest_version": 3,
-  "name": "Ad Theme Customizer",
-  "version": "1.0",
-  "description": "Replaces ads with your preferred themed content",
-  "icons": {
+  "manifest_version": 3, //This Tells chrome we are using a modern extension
+  "name": "Ad Theme Customizer", //The Display name of our Extension
+  "version": "1.0", // Essentially the version...basically number maount of times we changed the code
+  "description": "Replaces ads with your preferred themed content",// Quick Explananiton of what the code essential does
+  "icons": { // Diffreernt sized logos dpeepding for various plaes on chrom for the extetnsnion
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": {
+  "action": { // What happens when you click the icon basically action taken when you click on the icon
+    "default_popup": "popup.html",// The Html that pops 
+    "default_icon": { // the icon that is used on the toolbar
       "16": "icons/icon16.png",
       "32": "icons/icon32.png"
     }
   },
     "permissions": [
-    "storage",
-    "declarativeNetRequest",
-    "declarativeNetRequestWithHostAccess",
-    "scripting",
-    "activeTab"
+    "storage",// Acts as a the rmebering part of the users ad theme input
+    "declarativeNetRequest", // intercepts ads
+    "declarativeNetRequestWithHostAccess",// Inrecepts ads
+    "scripting",// replaces ads
+    "activeTab"// works on the current tab
   ],
-  "host_permissions": ["<all_urls>"],
-  "background": {
-    "service_worker": "background.js"
+  "host_permissions": ["<all_urls>"],// Works on any website
+  "background": {// The brain of the extension
+    "service_worker": "background.js" // A javascript file that constantly manages the core functions
   },
-  "content_scripts": [{
-    "matches": ["<all_urls>"],
-    "js": ["content.js"],
-    "run_at": "document_idle"
+  "content_scripts": [{// modifies the web pages
+    "matches": ["<all_urls>"],// This will ensure it works on every website
+    "js": ["content.js"],// will essentially change ads on pages
+    "run_at": "document_idle" // avoids any slowdowns
   }]
 }
  
