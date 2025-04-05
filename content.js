@@ -1,48 +1,45 @@
-// Remove ad elements from the page
-function removeAds() {
-  // Common ad selectors for various websites
-  const adSelectors = [
-    // Facebook
-    'div[data-pagelet^="FeedUnit_"]',
-    'div[aria-label="Sponsored"]',
-    'div[data-testid="story-subtitle"]:has(span:contains("Sponsored"))',
-    
-    // Amazon
-    '.puis-sponsored-container',
-    '.a-section.a-spacing-none.puis-sponsored-container',
-    '[data-component-type="sp-sponsored-result"]',
-    
-    // eBay
-    '.ad-item',
-    '.s-item__sep--ad',
-    '.s-item__ad-badge',
-    
-    // General
-    '[id*="ad-"]',
-    '[class*="ad-"]',
-    '[class*="Ad-"]',
-    '.advertisement',
-    '.ad-banner',
-    '.ad-wrapper',
-    '.ad-container'
-  ];
-
-  adSelectors.forEach(selector => {
-    document.querySelectorAll(selector).forEach(element => {
-      element.remove();
-    });
-  });
+// Add safe DOM element check utility
+function getElementSafe(selector) {
+  try {
+    return document.querySelector(selector);
+  } catch (error) {
+    console.error("Element query failed:", error);
+    return null;
+  }
 }
 
-// Run initially and then observe DOM changes
-removeAds();
+// Add message response validation
+function validateResponse(response) {
+  if (!response) {
+    throw new Error("No response received");
+  }
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response;
+}
 
-// Create a MutationObserver to watch for new ads
-const observer = new MutationObserver(mutations => {
-  removeAds();
-});
+// Modify message sending with error handling
+async function sendMessageSafe(message) {
+  try {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(message, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn("Message error:", chrome.runtime.lastError.message);
+          resolve(null);
+        } else {
+          try {
+            resolve(validateResponse(response));
+          } catch (error) {
+            console.warn("Response validation failed:", error.message);
+            resolve(null);
+          }
+        }
+      });
+    });
+  } catch (error) {
+    console.error("Message sending failed:", error);
+    return null;
+  }
+}
 
-observer.observe(document.body, {
-  childList: true,
-  subtree: true
-});
