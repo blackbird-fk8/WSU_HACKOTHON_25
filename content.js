@@ -43,3 +43,51 @@ async function sendMessageSafe(message) {
   }
 }
 
+// Update replaceAds function with better error handling
+async function replaceAds(theme) {
+  if (!theme) {
+    console.warn("No theme provided for ad replacement");
+    return;
+  }
+
+  try {
+    const response = await sendMessageSafe({ 
+      action: "getAds", 
+      theme: theme 
+    });
+    
+    const ads = response?.ads || [];
+    const selectors = getPlatformSelectors();
+    
+    selectors.forEach(selector => {
+      try {
+        document.querySelectorAll(selector).forEach(adElement => {
+          try {
+            // Skip if already processed or too small
+            if (adElement.offsetWidth < 50 || adElement.offsetHeight < 50) return;
+            if (adElement.getAttribute('data-themed-replaced')) return;
+            
+            // Process ad element
+            if (isAdRelevant(adElement, theme)) {
+              adElement.style.border = "2px solid #4CAF50";
+              adElement.setAttribute('data-themed-allowed', 'true');
+              return;
+            }
+            
+            // Replacement logic
+            const randomAd = ads.length > 0 ? ads[Math.floor(Math.random() * ads.length)] : null;
+            adElement.innerHTML = generateAdHtml(theme, randomAd);
+            adElement.setAttribute('data-themed-replaced', 'true');
+          } catch (elementError) {
+            console.error("Ad element processing failed:", elementError);
+          }
+        });
+      } catch (selectorError) {
+        console.error("Selector processing failed:", selectorError);
+      }
+    });
+  } catch (error) {
+    console.error("Ad replacement failed:", error);
+  }
+}
+
