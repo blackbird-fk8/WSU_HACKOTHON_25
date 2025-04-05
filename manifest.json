@@ -2,30 +2,36 @@
   "manifest_version": 3,
   "name": "FIG",
   "version": "1.0",
-  "description": "Blocks trackers and fills data collectors with fake data",
+  "description": "Tracking & protection with spoofing",
   "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  "action": {
+    "default_popup": "ui/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "alarms",
+    "scripting"
   ],
   "host_permissions": ["<all_urls>"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "core/loader.js",
+    "type": "module"
   },
   "content_scripts": [{
     "matches": ["<all_urls>"],
-    "js": ["content.js"],
+    "js": ["core/filler.js", "core/spoof.js"],
     "run_at": "document_start"
-  }],
-  "declarative_net_request": {
-    "rule_resources": [{
-      "id": "ruleset_1",
-      "enabled": true,
-      "path": "rules.json"
-    }]
-  }
+  }]
 }
  
