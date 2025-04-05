@@ -1,23 +1,31 @@
 {
-   "manifest_version": 3,
-   "name": "FIG",
-   "version": "1.0",
-   "description": "Generates fake information based on inrelevant information to confuse any trackers on websites",
-   "action": {
-    "default_popup": "popup/popup.html"
-   },
-   "permissions": ["activeTab", "scripting"],
-   "icons": {
-    "48": "icons/icon48.png"
-   },
-     "contents-scripts":  [
-    {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"]
-    }
-   ],
-   "background":    {
+  "manifest_version": 3,
+  "name": "FIG",
+  "version": "1.0",
+  "description": "Blocks trackers and fills data collectors with fake data",
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": ["<all_urls>"],
+  "background": {
     "service_worker": "background.js"
-   }
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["content.js"],
+    "run_at": "document_start"
+  }],
+  "declarative_net_request": {
+    "rule_resources": [{
+      "id": "ruleset_1",
+      "enabled": true,
+      "path": "rules.json"
+    }]
+  }
 }
  
